@@ -50,7 +50,7 @@ app.use(function(err, req, res, next) {
 
 // conexion mongo
 
-mongoose.connect('mongodb://localhost/prueba',  {useNewUrlParser: true});
+mongoose.connect('mongodb://localhost:27017/trabajoTerminal',  {useNewUrlParser: true});
 
 mongoose.Promise = global.Promise;
 

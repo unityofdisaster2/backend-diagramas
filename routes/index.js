@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var personaModel = require('../models/persona'); 
-
+var grafoModel = require('../models/graph');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -10,22 +10,24 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/api/registros', async (req, res) => {
-  const personas = await personaModel.find({});
+  //const personas = await personaModel.find({});
+  const modelosGrafos = await grafoModel.find({});
   try{
-    res.send(personas);
+    //res.send(personas);
+    res.send(modelosGrafos);
   }catch(err){
     res.status(500).send(err);
   }
 });
 
-router.post('/api/persona', async (req,res) => {
-  console.log(req.body);
-  const persona = new personaModel(req.body);
-
+router.post('/api/insertGraph', async (req,res) => {
+  
+  const grafo = new grafoModel(req.body);
   try{
-    await persona.save();
-    res.send(persona);
+    await grafo.save();
+    res.send({ code: 'correcto' });
   }catch(err){
+    
     res.status(500).send(err);
   }
 });
