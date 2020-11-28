@@ -10,7 +10,6 @@ var usersRouter = require('./routes/users');
 var mongoose = require('mongoose');
 var cors = require('cors');
 
-
 var app = express();
 
 app.use(cors());
@@ -56,7 +55,7 @@ mongoose.Promise = global.Promise;
 
 const db = mongoose.connection;
 
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.on('error', console.error.bind(console, 'MongoDB connection error'));
 
 
 

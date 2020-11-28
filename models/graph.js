@@ -2,11 +2,19 @@ const mongoose = require('mongoose');
 
 const grafoSchema = new mongoose.Schema({
     grafo: {
-        type: mongoose.Schema.Types.Mixed,
+        type: String,
         required: true
     },
     image: {
         type: mongoose.Schema.Types.Mixed,
+        required: true
+    },
+    group: {
+        type: String,
+        required: true
+    },
+    name: {
+        type: String,
         required: true
     }
 });
