@@ -3,24 +3,50 @@ var router = express.Router();
 var net = require('net');
 
 var cliente = new net.Socket({writable: true, readable: true});
-
+cliente.setTimeout(20000);
 
 let globalResponse;
-
+let globalString;
 
 // listener que se activara cuando el socket haga conexion con el servidor
 // de matlab. La funcion generada consiste en el conjunto de datos recibidos
 // como respuesta posterior al procesamiento que se haya realizado en matlab.
 cliente.on('data', (data) => {
-  console.log(data.toString());
-  globalResponse.send(data.toString());
-  //res.send(true);
-  cliente.end();
+  
+  // cuando la respuesta del servidor sobrepasa cierto numero de bytes
+  // se manda por lotes, por lo tanto cada que llegue un lote se convierte a
+  // cadena y se concatena en la variable globalString
+  var cadenaDatos = data.toString();
+  // se quita el ultimo caracter de la cadena ya que contiene el terminator de
+  // del servidor (el caracter que indica fin de cadena)
+  console.log('termina con: ', cadenaDatos.charAt(cadenaDatos.length- 1));
+  if(cadenaDatos.charAt(cadenaDatos.length- 1) === '~') {
+    globalString += cadenaDatos.replace('~','');
+    console.log('encontrado terminator');
+  } else {
+    globalString += cadenaDatos;
+  }
+  // globalString += cadenaDatos.substring(0, cadenaDatos.length - 1);
+  
+  // cliente.end();
 });
 
 // accion realizada cuando se termina la conexion con el servidor matlab
 cliente.on('end', () => {
+  try {
+    globalResponse.status(200).json(JSON.parse(globalString));
+  } catch(err) {
+    globalResponse.status(500).send(err);
+  }
+  
   console.log('conexion finalizada');
+});
+
+cliente.on('error', (err) => {
+  if(err.code === 'ECONNREFUSED') {
+    globalResponse.status(503).send();
+  }
+  // globalResponse.status(503).send();
 });
 
 
@@ -63,32 +89,27 @@ router.post('/api/insertGraph', async (req,res) => {
     await grafo.save();
     res.send({ code: 'correcto' });
   }catch(err){
-    console.log(err, 'hola');
     res.status(500).send(err);
   }
 });
 
-router.get('/registros:id', (req, res) => {
 
-});
 
 
 
 // ruta para procesar y enviar los datos contenidos en el diagrama y enviarlos
 // a matlab para su ejecucion
 router.post('/api/tcpMessage',(req, res) => {
-  // igualacion para ligar la respuesta con el listener del socket
-  globalResponse = res;
-  cliente.connect(1234, 'localhost', () => {
-    
-    cliente.write(JSON.stringify(req.body)+'\t');
-    cliente.end();
-    
-  });
   
+  globalString = "";
+  globalResponse = null;
+  // se hace esta igualacion para poder manipular la respuesta en otro contexto del programa
+  globalResponse = res;
+    cliente.connect(1234, 'localhost', () => {
+        cliente.write(JSON.stringify(req.body)+'~');
+        cliente.end();
 
-
-
+    });
 
 });
 
