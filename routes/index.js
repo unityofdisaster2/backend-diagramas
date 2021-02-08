@@ -3,7 +3,7 @@ var router = express.Router();
 var net = require('net');
 
 var cliente = new net.Socket({writable: true, readable: true});
-cliente.setTimeout(20000);
+cliente.setTimeout(60000);
 
 let globalResponse;
 let globalString;
