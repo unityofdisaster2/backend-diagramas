@@ -19,6 +19,6 @@ const grafoSchema = new mongoose.Schema({
     }
 });
 
-const Grafo = mongoose.model("grafo",grafoSchema);
+const Grafo = mongoose.model("grafo", grafoSchema);
 
-module.exports  = Grafo;
+module.exports = Grafo;
