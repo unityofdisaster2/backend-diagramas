@@ -37,6 +37,7 @@ As an additional note; since this project depends on the frontend hosted in [uni
   - The logic for the socket connection with matlab has been modified to remove global variables usage to have the code in a structured way instead of having listeners distributed in different scopes. To simplify the asynchronous operations for this connection, the logic has been wrapped inside a Promise, with this we just need to await for a response inside the matlabConnection and return the result given by the matlab server.
 - Database connection configuration has been moved to a dedicated file located inside the database folder.
 - An environment variables files has been added to separate configuration parameters as ports, hosts and connection strings from the logic.
+- **The connection string for mongoDB now points by default to a cluster created with mongoDB Atlas to storage the diagrams in the cloud.**
 
 [1]: https://github.com/unityofdisaster2/frontend-diagramas
 [2]: https://github.com/unityofdisaster2/repo_trabajo_terminal_2019_B029
